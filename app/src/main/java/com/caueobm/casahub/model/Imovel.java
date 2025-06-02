@@ -17,6 +17,27 @@ public class Imovel {
     private boolean disponivel;
     private String dataCadastro; // Pode usar String para simplificar o parse
 
+
+    public Imovel(int id, String tipo, String endereco, String cidade, String estado, String cep,
+                  Double valor, Double valorAluguel, int numeroQuartos, int numeroBanheiros, int metragem,
+                  boolean mobiliado, String descricao, boolean disponivel, String dataCadastro) {
+        this.id = id;
+        this.tipo = tipo;
+        this.endereco = endereco;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
+        this.valor = valor;
+        this.valorAluguel = valorAluguel;
+        this.numeroQuartos = numeroQuartos;
+        this.numeroBanheiros = numeroBanheiros;
+        this.metragem = metragem;
+        this.mobiliado = mobiliado;
+        this.descricao = descricao;
+        this.disponivel = disponivel;
+        this.dataCadastro = dataCadastro;
+    }
+
     // Getters e Setters
 
     public int getId() {
