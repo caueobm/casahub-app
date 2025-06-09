@@ -38,7 +38,6 @@ public class Imovel {
         this.dataCadastro = dataCadastro;
     }
 
-    // Getters e Setters
 
     public int getId() {
         return id;

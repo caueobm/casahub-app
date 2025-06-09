@@ -1,8 +1,11 @@
 package com.caueobm.casahub;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent; // Importe o Intent
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -11,11 +14,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.caueobm.casahub.activity.DetalheImovelActivity;
+import com.caueobm.casahub.activity.LoginActivity;
 import com.caueobm.casahub.adapter.ImovelAdapter;
 import com.caueobm.casahub.model.Imovel;
 import com.caueobm.casahub.network.FakeImovelService;
 import com.caueobm.casahub.network.ImovelService;
 import com.caueobm.casahub.network.RetrofitClient;
+import com.caueobm.casahub.util.TokenManager;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 // Importe sua DetalheImovelActivity se estiver em outro pacote
 // import com.caueobm.casahub.activity.DetalheImovelActivity;
 
@@ -32,22 +39,74 @@ public class MainActivity extends AppCompatActivity implements ImovelAdapter.OnI
 
     private RecyclerView recyclerView;
     private ImovelAdapter adapter;
+    private MaterialToolbar topAppBar;
+    private MaterialButton btnLogin, btnLogout;
+    private TokenManager tokenManager; // Declarado aqui
+
+    // Não se esqueça da TAG para os logs, se estiver usando Log.i(TAG, ...)
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // INICIALIZE O TOKENMANAGER AQUI!
+        tokenManager = new TokenManager(getApplicationContext());
+
+        topAppBar = findViewById(R.id.topAppBar);
+        setSupportActionBar(topAppBar);
+
+        // TAMBÉM INICIALIZE OS BOTÕES ANTES DE USÁ-LOS NA LÓGICA DE LOGIN
+        btnLogin = findViewById(R.id.btnLogin); // Use o ID correto do seu XML
+        btnLogout = findViewById(R.id.btnLogout); // Use o ID correto do seu XML
+
+        if (btnLogin == null || btnLogout == null) {
+            Log.e(TAG, "onCreate: Botão de login ou logout não encontrado no layout.");
+        } else {
+            atualizarVisibilidadeBotoesLogin();
+
+        }
+
         recyclerView = findViewById(R.id.recyclerViewImoveis);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         buscarImoveis();
     }
+    private void atualizarVisibilidadeBotoesLogin() {
+        if (btnLogin == null || btnLogout == null) {
+            Log.e(TAG, "atualizarVisibilidadeBotoesLogin: Botões nulos, não é possível configurar.");
+            return;
+        }
+
+        if (tokenManager.isLoggedIn()) {
+            btnLogin.setVisibility(View.GONE);
+            btnLogout.setVisibility(View.VISIBLE);
+            // Listener do btnLogout
+            btnLogout.setOnClickListener(v -> {
+                Log.i(TAG, "Botão Logout clicado!");
+                tokenManager.clearAuthToken();
+                Toast.makeText(MainActivity.this, "Logout realizado com sucesso!", Toast.LENGTH_SHORT).show();
+                atualizarVisibilidadeBotoesLogin(); // Reconfigura para mostrar btnLogin
+            });
+            // IMPORTANTE: Certifique-se que o btnLogin NÃO tem um listener aqui se estiver GONE
+            // ou que ele não interfira.
+        } else {
+            btnLogin.setVisibility(View.VISIBLE);
+            btnLogout.setVisibility(View.GONE);
+            // Listener do btnLogin
+            btnLogin.setOnClickListener(v -> {
+                Log.i(TAG, "Botão Login clicado! Redirecionando..."); // Adicione mais logs
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                Log.i(TAG, "startActivity(intent) para LoginActivity chamado."); // Log após chamar
+            });
+            // IMPORTANTE: Certifique-se que o btnLogout NÃO tem um listener aqui se estiver GONE
+        }
+    }
 
     private void buscarImoveis() {
-        // Defina uma flag para controlar se usa o serviço fake ou real
-        // Isso pode vir de uma configuração de build, uma constante de debug, etc.
-        boolean usarFakeService = true; // Mude para false para usar o Retrofit real
+        boolean usarFakeService = false;
 
         ImovelService service;
 
@@ -83,15 +142,10 @@ public class MainActivity extends AppCompatActivity implements ImovelAdapter.OnI
         });
     }
 
-    // 2. Sobrescreva o método da interface
+    // 2. Sobrescreva o metodo da interface
     @Override
     public void onVerDetalhesClick(long imovelId) {
-        // Crie o Intent para a DetalheImovelActivity
-        // Certifique-se de que DetalheImovelActivity.class está correto (importe se necessário)
         Intent intent = new Intent(MainActivity.this, DetalheImovelActivity.class);
-        // Passe o ID do imóvel para a próxima Activity
-        // Assumindo que o ID na sua classe Imovel é int e o método é getId()
-        // Se o ID for long, está correto. Se for int no seu Imovel.java, o parâmetro da interface e o getExtra devem ser int.
         intent.putExtra("IMOVEL_ID", imovelId);
         startActivity(intent);
     }

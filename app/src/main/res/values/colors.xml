@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Cores base do Material 3 (ou as que você já usa) -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Suas novas cores personalizadas -->
+    <color name="meu_laranja_primario">#FFA500</color> <!-- Laranja padrão -->
+    <color name="meu_laranja_variante">#FF8C00</color> <!-- Laranja mais escuro (opcional) -->
+    <color name="meu_fundo_branco">#FFFFFFFF</color>
+    <color name="minha_letra_preta">#FF000000</color>
+    <color name="minha_letra_cinza_escuro">#333333</color> <!-- Para textos secundários, se necessário -->
+
+    <color name="toolbar_background">#FF555555</color> <!-- Um cinza escuro, por exemplo -->
+    <color name="toolbar_text_color">#FFFFFFFF</color> <!-- Branco para texto/ícones da toolbar -->
+    <!-- Cores para Material Components (se você estiver usando tema Material) -->
+    <!-- Você pode mapear suas cores para os atributos de tema do Material -->
 </resources>

@@ -6,14 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".activity.DetalheImovelActivity">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
+        <include layout="@layout/layout_toolbar"/>
+        <!-- Imagem do imóvel com cantos arredondados -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivImovelImagem"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/grayhome"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="Imagem do Imóvel"
+            app:shapeAppearanceOverlay="@style/RoundedImageView" />
 
+        <!-- Progress bar e erro -->
         <ProgressBar
-            android:id="@+id/progressBarDetalhe"
+            android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,7 +34,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/tvDetalheError"
+            android:id="@+id/tvError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Falha ao carregar detalhes."
@@ -30,94 +43,143 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp" />
 
+        <!-- Tipo do imóvel -->
         <TextView
-            android:id="@+id/tvDetalheTipo"
+            android:id="@+id/tvTipo"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            tools:text="Tipo do Imóvel" />
+            tools:text="Apartamento" />
 
+        <!-- Endereço -->
         <TextView
-            android:id="@+id/tvDetalheEnderecoCompleto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="18sp"
-            tools:text="Endereço Completo, Número" />
-
-        <TextView
-            android:id="@+id/tvDetalheCidadeEstadoCep"
+            android:id="@+id/tvEnderecoCompleto"
+            style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textSize="16sp"
-            tools:text="Cidade - Estado, CEP: 00000-000" />
+            tools:text="Rua Exemplo, 123" />
 
         <TextView
-            android:id="@+id/tvDetalheValor"
+            android:id="@+id/tvCidadeEstadoCep"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            tools:text="Cidade - UF, CEP 00000-000" />
+
+        <!-- Valor com destaque -->
+        <TextView
+            android:id="@+id/tvValor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            tools:text="R$ 500.000,00" />
+
+        <!-- Descrição -->
+        <TextView
+            android:id="@+id/tvDescricao"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            tools:text="Descrição detalhada sobre o imóvel, características, localização e demais informações relevantes para o comprador." />
 
-        <TextView
-            android:id="@+id/tvDetalheDescricao"
-            android:layout_width="wrap_content"
+        <!-- Card com detalhes do imóvel -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:textSize="16sp"
-            tools:text="Descrição longa e detalhada do imóvel, falando sobre suas características, vantagens, e tudo mais que for relevante para o interessado." />
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-        <TextView
-            android:id="@+id/tvDetalheQuartos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textSize="16sp"
-            tools:text="Quartos: 3" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
 
-        <TextView
-            android:id="@+id/tvDetalheBanheiros"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="16sp"
-            tools:text="Banheiros: 2" />
+                <TextView
+                    android:id="@+id/tvQuartos"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Quartos: 3" />
 
-        <TextView
-            android:id="@+id/tvDetalheMetragem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="16sp"
-            tools:text="Metragem: 120 m²" />
+                <TextView
+                    android:id="@+id/tvBanheiros"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    tools:text="Banheiros: 2" />
 
-        <TextView
-            android:id="@+id/tvDetalheMobiliado"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="16sp"
-            tools:text="Mobiliado: Sim" />
+                <TextView
+                    android:id="@+id/tvMetragem"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    tools:text="Metragem: 120 m²" />
 
-        <TextView
-            android:id="@+id/tvDetalheDisponivel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="16sp"
-            tools:text="Disponível: Sim" />
+                <TextView
+                    android:id="@+id/tvMobiliado"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    tools:text="Mobiliado: Sim" />
 
-        <TextView
-            android:id="@+id/tvDetalheDataCadastro"
-            android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tvDisponivel"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    tools:text="Disponível: Sim" />
+
+                <TextView
+                    android:id="@+id/tvDataCadastro"
+                    style="@style/TextAppearance.MaterialComponents.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    tools:text="Cadastrado em: 01/01/2023" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Botões de Ação -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="14sp"
-            android:textStyle="italic"
-            tools:text="Cadastrado em: 01/01/2023" />
+            android:orientation="horizontal"
+            android:layout_marginTop="24dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnVoltarTelaInicial"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Voltar"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnMarcarInteresse"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Marcar Interesse"
+                app:icon="@drawable/ic_star_border"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

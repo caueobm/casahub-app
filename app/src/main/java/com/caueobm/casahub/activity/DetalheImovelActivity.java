@@ -1,127 +1,188 @@
 package com.caueobm.casahub.activity; // Ajuste seu package se necessário
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.view.View;
+
 import android.util.Log;
 import android.view.MenuItem; // Para o botão "Up" (voltar) na ActionBar
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.caueobm.casahub.R;
+import com.caueobm.casahub.util.TokenManager;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.caueobm.casahub.MainActivity;
 import com.caueobm.casahub.R; // Importe o R do seu pacote
 import com.caueobm.casahub.model.Imovel;
 import com.caueobm.casahub.network.ImovelService;
 import com.caueobm.casahub.network.RetrofitClient;
+import com.caueobm.casahub.util.TokenManager;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.Locale;
-
 
 public class DetalheImovelActivity extends AppCompatActivity {
 
     public static final String EXTRA_IMOVEL_ID = "IMOVEL_ID"; // Chave consistente
 
-    private ProgressBar progressBarDetalhe;
-    private TextView tvDetalheError;
-    // Declare todos os seus TextViews para os detalhes do imóvel
-    private TextView tvDetalheTipo, tvDetalheEnderecoCompleto, tvDetalheCidadeEstadoCep, tvDetalheValor;
-    private TextView tvDetalheDescricao, tvDetalheQuartos, tvDetalheBanheiros, tvDetalheMetragem;
-    private TextView tvDetalheMobiliado, tvDetalheDisponivel, tvDetalheDataCadastro;
+    private ProgressBar progressBar; // Refatorado: progressBarDetalhe -> progressBar
+    private TextView tvError;       // Refatorado: tvDetalheError -> tvError
 
+    // Declare todos os seus TextViews para os detalhes do imóvel
+    private TextView tvTipo, tvEnderecoCompleto, tvCidadeEstadoCep, tvValor; // Refatorado
+    private TextView tvDescricao, tvQuartos, tvBanheiros, tvMetragem;     // Refatorado
+    private TextView tvMobiliado, tvDisponivel, tvDataCadastro;            // Refatorado
+
+    private MaterialButton btnLogin, btnLogout;
     private ImovelService imovelService;
+    private TokenManager tokenManager;
     private long imovelIdRecebido = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhe_imovel);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Detalhes do Imóvel");
+        // Inicializar o TokenManager
+        tokenManager = new TokenManager(getApplicationContext());
+
+        // 1. Inicializar Views
+        progressBar = findViewById(R.id.progressBar);
+        tvError = findViewById(R.id.tvError);
+        tvTipo = findViewById(R.id.tvTipo);
+        tvEnderecoCompleto = findViewById(R.id.tvEnderecoCompleto);
+        tvCidadeEstadoCep = findViewById(R.id.tvCidadeEstadoCep);
+        tvValor = findViewById(R.id.tvValor);
+        tvDescricao = findViewById(R.id.tvDescricao);
+        tvQuartos = findViewById(R.id.tvQuartos);
+        tvBanheiros = findViewById(R.id.tvBanheiros);
+        tvMetragem = findViewById(R.id.tvMetragem);
+        tvMobiliado = findViewById(R.id.tvMobiliado);
+        tvDisponivel = findViewById(R.id.tvDisponivel);
+        tvDataCadastro = findViewById(R.id.tvDataCadastro);
+
+        // Adicionando funcao do botao voltar
+        Button btnVoltar = findViewById(R.id.btnVoltarTelaInicial);
+        btnVoltar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetalheImovelActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+        });
+
+        btnLogin = findViewById(R.id.btnLogin);
+        btnLogout = findViewById(R.id.btnLogout);
+
+        if (tokenManager.isLoggedIn()) {
+            // Usuário está logado, esconder o botão de login
+            btnLogin.setVisibility(View.GONE);
+            btnLogout.setVisibility(View.VISIBLE);
+            btnLogout.setOnClickListener(v -> {
+                Log.i(TAG, "Botão Logout clicado!");
+                tokenManager.clearAuthToken(); // Limpa o token
+                Toast.makeText(DetalheImovelActivity.this, "Logout realizado com sucesso!", Toast.LENGTH_SHORT).show();
+
+            });
+        } else {
+            // Usuário não está logado, mostrar o botão de login
+            btnLogin.setVisibility(View.VISIBLE);
+            btnLogout.setVisibility(View.GONE);
+
+            btnLogin.setOnClickListener(v -> {
+                Log.i(TAG, "Botão Login clicado!");
+                Intent intent = new Intent(DetalheImovelActivity.this, LoginActivity.class);
+                startActivity(intent);
+            });
         }
 
-        // Inicializar Views
-        progressBarDetalhe = findViewById(R.id.progressBarDetalhe);
-        tvDetalheError = findViewById(R.id.tvDetalheError);
-        tvDetalheTipo = findViewById(R.id.tvDetalheTipo);
-        tvDetalheEnderecoCompleto = findViewById(R.id.tvDetalheEnderecoCompleto);
-        tvDetalheCidadeEstadoCep = findViewById(R.id.tvDetalheCidadeEstadoCep);
-        tvDetalheValor = findViewById(R.id.tvDetalheValor);
-        tvDetalheDescricao = findViewById(R.id.tvDetalheDescricao);
-        tvDetalheQuartos = findViewById(R.id.tvDetalheQuartos);
-        tvDetalheBanheiros = findViewById(R.id.tvDetalheBanheiros);
-        tvDetalheMetragem = findViewById(R.id.tvDetalheMetragem);
-        tvDetalheMobiliado = findViewById(R.id.tvDetalheMobiliado);
-        tvDetalheDisponivel = findViewById(R.id.tvDetalheDisponivel);
-        tvDetalheDataCadastro = findViewById(R.id.tvDetalheDataCadastro);
-
-        // Inicializar Retrofit Service
+        // 2. Inicializar Retrofit Service
         imovelService = RetrofitClient.getClient().create(ImovelService.class);
 
+        // 3. Obter o ID do imóvel do Intent e carregar os detalhes
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_IMOVEL_ID)) {
-            imovelIdRecebido = intent.getLongExtra(EXTRA_IMOVEL_ID, -1L);
+            imovelIdRecebido = intent.getLongExtra(EXTRA_IMOVEL_ID, -1L); // -1L como valor padrão
         }
 
         if (imovelIdRecebido != -1) {
             Log.d("DetalheImovelActivity", "ID do Imóvel recebido: " + imovelIdRecebido);
-            carregarDetalhesDoImovel(imovelIdRecebido); // Nome do método alterado para clareza
+            carregarDetalhesDoImovel(imovelIdRecebido);
+        } else {
+            Log.e("DetalheImovelActivity", "ID do Imóvel não recebido ou inválido.");
+            mostrarErro("Erro: ID do imóvel não encontrado."); // Usa seu método mostrarErro
+            // Considerar finalizar a activity se o ID é crucial e não foi passado
+            // Toast.makeText(this, "Erro: ID do imóvel não encontrado.", Toast.LENGTH_LONG).show();
+            // finish();
         }
     }
 
     private void carregarDetalhesDoImovel(long id) {
-        progressBarDetalhe.setVisibility(View.VISIBLE);
-        tvDetalheError.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        tvError.setVisibility(View.GONE);
 
-        imovelService.getImovelPorId(id).enqueue(new Callback<Imovel>() {
+        // imovelService deve estar inicializado
+        // imovelService = RetrofitClient.getClient().create(ImovelService.class);
+
+        imovelService.getImovelPorId(id).enqueue(new Callback<Imovel>() { // Use o 'id' recebido
             @Override
             public void onResponse(@NonNull Call<Imovel> call, @NonNull Response<Imovel> response) {
-                progressBarDetalhe.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     Imovel imovel = response.body();
-                    preencherCampos(imovel);
+                    preencherCampos(imovel); // Seu método para mostrar os dados na UI
                 } else {
-                    mostrarErro("Erro ao carregar os dados do imóvel.");
+                    Log.e("DetalheImovelActivity", "Erro na resposta da API: " + response.code() + " - " + response.message());
+                    mostrarErro("Erro ao carregar os dados do imóvel. Código: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Imovel> call, @NonNull Throwable t) {
-                progressBarDetalhe.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                Log.e("DetalheImovelActivity", "Falha na requisição: ", t);
                 mostrarErro("Falha na conexão: " + t.getMessage());
             }
         });
     }
 
     private void preencherCampos(Imovel imovel) {
-        tvDetalheTipo.setText(imovel.getTipo());
-        tvDetalheEnderecoCompleto.setText(imovel.getEndereco());
-        tvDetalheCidadeEstadoCep.setText(imovel.getCidade() + " - " + imovel.getEstado() + ", " + imovel.getCep());
+        tvTipo.setText(imovel.getTipo());
+        tvEnderecoCompleto.setText(imovel.getEndereco());
+        tvCidadeEstadoCep.setText(imovel.getCidade() + " - " + imovel.getEstado() + ", " + imovel.getCep());
 
         String valorFormatado = "R$ " + String.format(Locale.getDefault(), "%.2f",
                 imovel.getValor() != null ? imovel.getValor() : imovel.getValorAluguel());
-        tvDetalheValor.setText(valorFormatado);
+        tvValor.setText(valorFormatado);
 
-        tvDetalheDescricao.setText(imovel.getDescricao());
-        tvDetalheQuartos.setText(imovel.getNumeroQuartos() + " quarto(s)");
-        tvDetalheBanheiros.setText(imovel.getNumeroBanheiros() + " banheiro(s)");
-        tvDetalheMetragem.setText(imovel.getMetragem() + " m²");
-        tvDetalheMobiliado.setText(imovel.isMobiliado() ? "Sim" : "Não");
-        tvDetalheDisponivel.setText(imovel.isDisponivel() ? "Disponível" : "Indisponível");
-        tvDetalheDataCadastro.setText("Cadastrado em: " + imovel.getDataCadastro());
+        tvDescricao.setText(imovel.getDescricao());
+        tvQuartos.setText(imovel.getNumeroQuartos() + " quarto(s)");
+        tvBanheiros.setText(imovel.getNumeroBanheiros() + " banheiro(s)");
+        tvMetragem.setText(imovel.getMetragem() + " m²");
+        tvMobiliado.setText(imovel.isMobiliado() ? "Sim" : "Não");
+        tvDisponivel.setText(imovel.isDisponivel() ? "Disponível" : "Indisponível");
+        tvDataCadastro.setText("Cadastrado em: " + imovel.getDataCadastro());
     }
 
     private void mostrarErro(String mensagem) {
-        tvDetalheError.setText(mensagem);
-        tvDetalheError.setVisibility(View.VISIBLE);
+        tvError.setText(mensagem);
+        tvError.setVisibility(View.VISIBLE);
     }
 
 }

@@ -6,12 +6,13 @@ import com.caueobm.casahub.model.Imovel;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import okhttp3.Request;
+import okhttp3.ResponseBody;
+import okio.Timeout;
 import retrofit2.Call; // Importe Call
 import retrofit2.Callback; // Importe Callback
 import retrofit2.Response; // Importe Response
-
-// 1. Faça FakeImovelService implementar ImovelService
 public class FakeImovelService implements ImovelService { // Mude aqui
 
     private static List<Imovel> listaDeImoveisEstatica = new ArrayList<>();
@@ -56,17 +57,34 @@ public class FakeImovelService implements ImovelService { // Mude aqui
             }
 
             @Override
-            public boolean isExecuted() { return false; }
+            public boolean isExecuted() {
+                return false;
+            }
+
             @Override
-            public void cancel() {}
+            public void cancel() {
+
+            }
+
             @Override
-            public boolean isCanceled() { return false; }
+            public boolean isCanceled() {
+                return false;
+            }
+
             @Override
-            public Call<List<Imovel>> clone() { return this; }
+            public Call<List<Imovel>> clone() {
+                return null;
+            }
+
             @Override
-            public Request request() { return null; } // Pode retornar um request dummy se necessário
+            public Request request() {
+                return null;
+            }
+
             @Override
-            public okio.Timeout timeout() {return okio.Timeout.NONE;} // Adicionado para compatibilidade com versões mais recentes
+            public Timeout timeout() {
+                return null;
+            }
         };
     }
 
@@ -76,45 +94,12 @@ public class FakeImovelService implements ImovelService { // Mude aqui
     }
 
     @Override
-    public Call<Imovel> buscarImovelPorId(long imovelId) {
-        Imovel encontrado = null;
-        for (Imovel imovel : listaDeImoveisEstatica) {
-            if (imovel.getId() == imovelId) {
-                encontrado = imovel;
-                break;
-            }
-        }
-        final Imovel resultadoFinal = encontrado; // Precisa ser final para usar no Callback
+    public Call<Imovel> criarImovel(Long usuarioId, Imovel imovel) {
+        return null;
+    }
 
-        return new Call<Imovel>() {
-            @Override
-            public Response<Imovel> execute() {
-                return Response.success(resultadoFinal);
-            }
-
-            @Override
-            public void enqueue(@NonNull Callback<Imovel> callback) {
-                if (resultadoFinal != null) {
-                    callback.onResponse(this, Response.success(resultadoFinal));
-                } else {
-                    // Simula um erro 404 Not Found
-                    // Você pode criar uma Response de erro mais elaborada se precisar
-                    // Response.error(404, ResponseBody.create(null, "Imóvel não encontrado"))
-                    callback.onFailure(this, new Exception("Imóvel com id " + imovelId + " não encontrado (FAKE)"));
-                }
-            }
-            @Override
-            public boolean isExecuted() { return false; }
-            @Override
-            public void cancel() {}
-            @Override
-            public boolean isCanceled() { return false; }
-            @Override
-            public Call<Imovel> clone() { return this; }
-            @Override
-            public Request request() { return null; }
-            @Override
-            public okio.Timeout timeout() {return okio.Timeout.NONE;}
-        };
+    @Override
+    public Call<ResponseBody> uploadFotos(Long imovelId, List<MultipartBody.Part> files) {
+        return null;
     }
 }

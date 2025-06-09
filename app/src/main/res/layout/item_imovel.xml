@@ -1,44 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:elevation="4dp"
-    android:padding="8dp">
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tvTipo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            tools:text="Apartamento Cobertura" />
 
         <TextView
             android:id="@+id/tvEndereco"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            tools:text="Rua das Palmeiras, 789 - Centro" />
 
         <TextView
             android:id="@+id/tvValor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="#FF5722" />
+            android:layout_marginTop="8dp"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold"
+            tools:text="R$ 1.250.000,00" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnVerDetalhes"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Ver Detalhes" />
+            android:layout_marginTop="12dp"
+            android:layout_gravity="end"
+            android:text="Ver Detalhes"
+            app:icon="@drawable/ic_arrow_forward"
+            app:iconGravity="end" />
+        <!-- Substitua ic_arrow_forward por um ícone de sua preferência (ex: de Material Icons) -->
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
