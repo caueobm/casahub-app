@@ -33,7 +33,7 @@ public class CadastroViewModel extends AndroidViewModel {
 
     public CadastroViewModel(@NonNull Application application) {
         super(application);
-        authService = RetrofitClient.getClient().create(AuthService.class);
+        authService = RetrofitClient.getClient(application.getApplicationContext()).create(AuthService.class);
         tokenManager = new TokenManager(application.getApplicationContext());
     }
 
@@ -94,12 +94,7 @@ public class CadastroViewModel extends AndroidViewModel {
                     String errorMessage = "Erro no cadastro";
                     if (response.errorBody() != null) {
                         try {
-                            // Tente parsear uma mensagem de erro específica do backend
-                            // (você pode precisar de um modelo de erro ou parsear o JSON manualmente)
                             errorMessage = response.errorBody().string();
-                            // Frequentemente, o backend retorna um JSON como: {"error": "Email já existe"}
-                            // Você pode usar uma biblioteca como Gson para parsear isso.
-                            // Por simplicidade, vamos usar a mensagem crua por enquanto.
                             Log.e(TAG, "Erro no cadastro (errorBody): " + errorMessage + " Código: " + response.code());
                         } catch (Exception e) {
                             Log.e(TAG, "Erro ao parsear errorBody: ", e);

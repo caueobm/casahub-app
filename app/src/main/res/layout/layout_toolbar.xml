@@ -5,18 +5,13 @@
     android:id="@+id/topAppBar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    app:title=""
-    android:theme="?attr/actionBarTheme" >
-    <!-- Exibe o logo do aplicativo à esquerda da barra de ferramentas. -->
-    <ImageView
-        android:id="@+id/logoImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_gravity="start|center_vertical"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/ic_star_border"
-        android:contentDescription="@string/logo_do_aplicativo"
-        android:adjustViewBounds="true"/>
+    android:theme="?attr/actionBarTheme"
+    android:background="@color/toolbar_background"
+    app:title="CasaHub"
+    app:titleTextAppearance="@style/ToolbarTitle">  <!-- Linha adicionada -->
+
+
+
     <!-- Cria um botão de "Login" à direita da barra de ferramentas. -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
@@ -38,6 +33,17 @@
         android:layout_gravity="end|center_vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnListarClientes"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="end|center_vertical"
+        android:text="@string/listar_clientes"
+        android:layout_marginEnd="16dp"/>
+
 
 
 </com.google.android.material.appbar.MaterialToolbar>

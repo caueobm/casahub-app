@@ -31,9 +31,7 @@ public class LoginViewModel extends AndroidViewModel {
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
-        // É importante que o RetrofitClient e o TokenManager sejam inicializados aqui.
-        // O RetrofitClient.getClient() já é um singleton, então não há problema em chamá-lo.
-        authService = RetrofitClient.getClient().create(AuthService.class);
+        authService = RetrofitClient.getClient(application.getApplicationContext()).create(AuthService.class);
         tokenManager = new TokenManager(application.getApplicationContext());
     }
 

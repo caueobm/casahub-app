@@ -1,26 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Casahub" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
+    <style name="Theme.CasaHub" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Cor primária do app (laranja) -->
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryContainer">@color/meu_laranja_variante</item>
 
-        <!-- Cor Primária -->
-        <item name="colorPrimary">@color/meu_laranja_primario</item>
-        <item name="colorPrimaryVariant">@color/meu_laranja_variante</item> <!-- Opcional, para variações como a status bar -->
-        <item name="colorOnPrimary">@color/meu_fundo_branco</item> <!-- Cor do texto/ícones sobre a cor primária -->
+        <item name="colorSecondary">@color/meu_laranja_variante</item>
+
         <item name="android:colorBackground">@color/meu_fundo_branco</item>
-        <item name="colorSurface">@color/meu_fundo_branco</item> <!-- Para superfícies como Cards, BottomSheets -->
-
-        <!-- Cor de Texto Padrão -->
-        <!-- Para Material 3, os atributos de texto são um pouco diferentes,
-             mas os básicos abaixo ainda podem ter efeito ou você pode precisar
-             usar os atributos específicos do M3 se quiser mais granularidade. -->
-        <item name="android:textColorPrimary">@color/minha_letra_preta</item>
-        <item name="android:textColorSecondary">@color/minha_letra_cinza_escuro</item>
-        <item name="colorOnBackground">@color/minha_letra_preta</item> <!-- Texto sobre o fundo principal -->
-        <item name="colorOnSurface">@color/minha_letra_preta</item> <!-- Texto sobre superfícies -->
-
+        <item name="android:textColor">@color/minha_letra_preta</item>
+        <item name="materialButtonStyle">@style/Widget.Material3.Button</item>
     </style>
-
-    <style name="Theme.Casahub" parent="Base.Theme.Casahub" />
-
 </resources>

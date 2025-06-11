@@ -8,11 +8,11 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@mipmap/logo"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Casahub"
+        android:theme="@style/Theme.CasaHub"
+
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
@@ -33,7 +33,9 @@
         <activity
             android:name=".activity.CadastroActivity"
             android:label="Cadastro" />
-
+        <activity
+            android:name=".activity.MeusClientesActivity"
+            android:label="Meus Clientes" />
     </application>
 
 </manifest>

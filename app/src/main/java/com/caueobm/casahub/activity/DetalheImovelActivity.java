@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import android.content.Intent;
 import android.os.Bundle;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -12,30 +13,27 @@ import retrofit2.Response;
 import android.view.View;
 
 import android.util.Log;
-import android.view.MenuItem; // Para o botão "Up" (voltar) na ActionBar
-import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.caueobm.casahub.R;
+import com.caueobm.casahub.ui.BaseActivity;
 import com.caueobm.casahub.util.TokenManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.caueobm.casahub.MainActivity;
-import com.caueobm.casahub.R; // Importe o R do seu pacote
 import com.caueobm.casahub.model.Imovel;
 import com.caueobm.casahub.network.ImovelService;
 import com.caueobm.casahub.network.RetrofitClient;
-import com.caueobm.casahub.util.TokenManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.Locale;
 
-public class DetalheImovelActivity extends AppCompatActivity {
+public class DetalheImovelActivity extends BaseActivity {
 
     public static final String EXTRA_IMOVEL_ID = "IMOVEL_ID"; // Chave consistente
 
@@ -47,7 +45,7 @@ public class DetalheImovelActivity extends AppCompatActivity {
     private TextView tvDescricao, tvQuartos, tvBanheiros, tvMetragem;     // Refatorado
     private TextView tvMobiliado, tvDisponivel, tvDataCadastro;            // Refatorado
 
-    private MaterialButton btnLogin, btnLogout;
+    private MaterialButton btnMarcarInteresse;
     private ImovelService imovelService;
     private TokenManager tokenManager;
     private long imovelIdRecebido = -1;
@@ -57,6 +55,7 @@ public class DetalheImovelActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhe_imovel);
+        configurarToolbar();
 
         // Inicializar o TokenManager
         tokenManager = new TokenManager(getApplicationContext());
@@ -76,6 +75,19 @@ public class DetalheImovelActivity extends AppCompatActivity {
         tvDisponivel = findViewById(R.id.tvDisponivel);
         tvDataCadastro = findViewById(R.id.tvDataCadastro);
 
+        btnMarcarInteresse = findViewById(R.id.btnMarcarInteresse);
+
+        btnMarcarInteresse.setOnClickListener(v -> {
+            if (!tokenManager.isLoggedIn()) {
+                Toast.makeText(this, "Você precisa estar logado para marcar interesse", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(DetalheImovelActivity.this, LoginActivity.class);
+                intent.putExtra("redirectAfterLogin", true);
+                startActivity(intent);
+                return;
+            }
+
+            registrarInteresseNoImovel(imovelIdRecebido);
+        });
         // Adicionando funcao do botao voltar
         Button btnVoltar = findViewById(R.id.btnVoltarTelaInicial);
         btnVoltar.setOnClickListener(new View.OnClickListener() {
@@ -87,33 +99,8 @@ public class DetalheImovelActivity extends AppCompatActivity {
             }
         });
 
-        btnLogin = findViewById(R.id.btnLogin);
-        btnLogout = findViewById(R.id.btnLogout);
-
-        if (tokenManager.isLoggedIn()) {
-            // Usuário está logado, esconder o botão de login
-            btnLogin.setVisibility(View.GONE);
-            btnLogout.setVisibility(View.VISIBLE);
-            btnLogout.setOnClickListener(v -> {
-                Log.i(TAG, "Botão Logout clicado!");
-                tokenManager.clearAuthToken(); // Limpa o token
-                Toast.makeText(DetalheImovelActivity.this, "Logout realizado com sucesso!", Toast.LENGTH_SHORT).show();
-
-            });
-        } else {
-            // Usuário não está logado, mostrar o botão de login
-            btnLogin.setVisibility(View.VISIBLE);
-            btnLogout.setVisibility(View.GONE);
-
-            btnLogin.setOnClickListener(v -> {
-                Log.i(TAG, "Botão Login clicado!");
-                Intent intent = new Intent(DetalheImovelActivity.this, LoginActivity.class);
-                startActivity(intent);
-            });
-        }
-
         // 2. Inicializar Retrofit Service
-        imovelService = RetrofitClient.getClient().create(ImovelService.class);
+        imovelService = RetrofitClient.getClient(getApplicationContext()).create(ImovelService.class);
 
         // 3. Obter o ID do imóvel do Intent e carregar os detalhes
         Intent intent = getIntent();
@@ -127,9 +114,6 @@ public class DetalheImovelActivity extends AppCompatActivity {
         } else {
             Log.e("DetalheImovelActivity", "ID do Imóvel não recebido ou inválido.");
             mostrarErro("Erro: ID do imóvel não encontrado."); // Usa seu método mostrarErro
-            // Considerar finalizar a activity se o ID é crucial e não foi passado
-            // Toast.makeText(this, "Erro: ID do imóvel não encontrado.", Toast.LENGTH_LONG).show();
-            // finish();
         }
     }
 
@@ -183,6 +167,26 @@ public class DetalheImovelActivity extends AppCompatActivity {
     private void mostrarErro(String mensagem) {
         tvError.setText(mensagem);
         tvError.setVisibility(View.VISIBLE);
+    }
+
+    private void registrarInteresseNoImovel(long imovelId) {
+        imovelService.registrarInteresse(imovelId).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(DetalheImovelActivity.this, "Interesse registrado com sucesso!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(DetalheImovelActivity.this, "Falha ao registrar interesse: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.e("DetalheImovel", "Erro: " + response.code() + " " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(DetalheImovelActivity.this, "Erro na requisição: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("DetalheImovel", "Falha na API", t);
+            }
+        });
     }
 
 }

@@ -22,9 +22,8 @@ public interface ImovelService {
     @GET("api/imoveis/{id}")
     Call<Imovel> getImovelPorId(@Path("id") long id);
 
-    @POST("imoveis/usuario/{usuarioId}")
+    @POST("api/imoveis/usuario/{usuarioId}")
     Call<Imovel> criarImovel(@Path("usuarioId") Long usuarioId, @Body Imovel imovel);
-
 
     @Multipart
     @POST("imoveis/{id}/fotos")
@@ -32,4 +31,9 @@ public interface ImovelService {
             @Path("id") Long imovelId,
             @Part List<MultipartBody.Part> files
     );
+
+    @POST("api/interesses/imovel/{imovelId}")
+    Call<ResponseBody> registrarInteresse(@Path("imovelId") long imovelId);
+
+
 }

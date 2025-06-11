@@ -18,41 +18,47 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
+
         <TextView
-            android:id="@+id/tvTipo"
+            android:id="@+id/tvNome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/TextAppearance.MaterialComponents.Headline6"
-            tools:text="Apartamento Cobertura" />
+            tools:text="Isabela Inquilina" />
 
         <TextView
-            android:id="@+id/tvEndereco"
+            android:id="@+id/tvTipoImovel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             style="@style/TextAppearance.MaterialComponents.Body2"
-            tools:text="Rua das Palmeiras, 789 - Centro" />
+            tools:text="Interessado em: Apartamento" />
 
         <TextView
-            android:id="@+id/tvValor"
+            android:id="@+id/tvEnderecoImovel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            tools:text="Endereço: Rua A, 123 - São Paulo, SP" />
+
+        <TextView
+            android:id="@+id/tvEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             style="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:textColor="?attr/colorPrimary"
-            android:textStyle="bold"
-            tools:text="R$ 1.250.000,00" />
+            tools:text="inquilino@casahub.com" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnVerDetalhes"
-            style="?attr/materialButtonOutlinedStyle"
+        <TextView
+            android:id="@+id/tvTelefone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_gravity="end"
-            android:text="Ver Detalhes"
-            app:icon="@drawable/ic_arrow_forward"
-            app:iconGravity="end" />
+            android:layout_marginTop="4dp"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            tools:text="(11) 99999-9999" />
+
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

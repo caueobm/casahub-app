@@ -3,4 +3,5 @@
     <string name="logo_do_aplicativo">Logo do Aplicativo</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
-</resources>
+    <string name="listar_clientes">Listar Clientes</string>
+    <string name="lista_de_clientes_interessados">Lista de clientes interessados</string></resources>

@@ -63,5 +63,6 @@ dependencies {
     // Lifecycle runtime ktx (geralmente já incluído com activity-ktx ou fragment-ktx)
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
+
 }
 
